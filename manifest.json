@@ -1,0 +1,19 @@
+{
+  "name": "香港粤语学堂",
+  "short_name": "粤学堂",
+  "description": "香港粤语学习平台 — 粵拼/口語/歌曲/K歌/兒童",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#6C5CE7",
+  "theme_color": "#6C5CE7",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "zh-HK",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-180.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "categories": ["education", "language"],
+  "prefer_related_applications": false
+}
