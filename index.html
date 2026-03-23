@@ -1231,6 +1231,8 @@ textarea:focus { border-color: var(--primary); }
 .ai-scenario:hover { border-color: var(--primary); background: #F8F9FA; }
     </style>
 </head>
+
+</head>
 <body>
 
 </head>
@@ -1578,7 +1580,8 @@ textarea:focus { border-color: var(--primary); }
         </section>
     </main>
 
-        <script>
+        
+    <script>
 // ========== 粵拼字典 ==========
 const JYUTPING_DICT = {
     // 常用字
@@ -3448,9 +3451,11 @@ async function translateParagraph() {
     // 粵語翻譯（字典＋語法規則）
     const yue = mandarinToCantonese(srcText);
     const yueJyutping = toJyutping(yue);
+    const srcJyutping = toJyutping(srcText);
     yueDiv.innerHTML = `
         <div style="font-size:20px;margin-bottom:8px">${yue}</div>
-        <div style="font-size:13px;color:#6C5CE7">${yueJyutping}</div>
+        <div style="font-size:14px;color:#6C5CE7;font-weight:bold;margin-bottom:4px">🔊 ${yueJyutping}</div>
+        <div style="font-size:11px;color:#B2BEC3">原文粵拼：${srcJyutping}</div>
     `;
 
     // 英語翻譯（MyMemory API，免費無需key）
@@ -3658,7 +3663,34 @@ function nextScenarioStep() {
     if (step.bot) {
         addBotMessage(step.bot, step.jyutping);
         scenarioStep++;
+    } else if (step.expect) {
+        // 顯示期望回答提示（含粵拼），方便糾音
+        showExpectHint(step.expect, step.jyutping);
     }
+}
+
+function showExpectHint(text, jyutping) {
+    const container = document.getElementById('dialogueMessages');
+    const div = document.createElement('div');
+    div.className = 'msg msg-bot';
+    div.style.opacity = '0.6';
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.style.cssText = 'background:#FFF9E6;border:1px dashed #FDCB6E';
+    bubble.innerHTML = `
+        <div style="font-size:11px;color:#E17055;margin-bottom:4px">💡 建議回答</div>
+        <div style="font-size:17px">${text}</div>
+        ${jyutping ? `<div class="msg-jyutping" style="font-size:14px;font-weight:bold;color:#6C5CE7">${jyutping}</div>` : ''}
+    `;
+    const btn = document.createElement('button');
+    btn.textContent = '🔊';
+    btn.style.cssText = 'margin-top:6px;padding:2px 10px;border:none;background:rgba(99,110,114,0.15);color:#636E72;border-radius:10px;cursor:pointer;font-size:12px';
+    btn.addEventListener('click', () => speakText(text));
+    bubble.appendChild(btn);
+    div.innerHTML = '<div class="msg-avatar">💡</div>';
+    div.appendChild(bubble);
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
 }
 
 function addBotMessage(text, jyutping) {
@@ -3998,8 +4030,9 @@ function speakText(text, lang, rate) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang || 'zh-HK';
-        utterance.rate = rate || (lang === 'en-GB' || lang === 'en-US' ? 0.9 : 0.88);
-        utterance.pitch = 1.05; // 微高一點，更自然
+        utterance.rate = rate || (lang === 'en-GB' || lang === 'en-US' ? 0.85 : 0.82);
+        utterance.pitch = 1.05;
+        utterance.volume = 1.0; // 最大音量
 
         // 嘗試找到合適語音
         const voices = window.speechSynthesis.getVoices();
@@ -4660,6 +4693,7 @@ initApp();
 
 
     </script>
+
 
     <!-- PWA Install Button -->
     <div id="pwaInstallBtn" onclick="installPWA()" style="display:none;position:fixed;bottom:80px;right:16px;background:#6C5CE7;color:#fff;border:none;padding:12px 20px;border-radius:25px;cursor:pointer;font-size:14px;font-weight:bold;box-shadow:0 4px 15px rgba(108,92,231,0.4);z-index:9999;align-items:center;gap:6px">
